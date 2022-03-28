@@ -1,6 +1,7 @@
 <template>
   <v-card class="bg-white shadow rounded px-3 pt-3 pb-5 border border-white">
     <v-chip
+      v-if="task.type"
       small
       :color="badgeColor"
       class="white--text"
@@ -10,15 +11,15 @@
       </v-card-title>
     <v-card-text>
       {{task.description}}
-      <KanbanBadge v-show="task.type" :color="badgeColor">{{task.type}}</KanbanBadge>
+      <!-- <KanbanBadge v-show="task.type" :color="badgeColor">{{task.type}}</KanbanBadge> -->
     </v-card-text>
   </v-card>
 </template>
 <script>
-import KanbanBadge from "@/components/KanbanBadge";
+// import KanbanBadge from "@/components/KanbanBadge";
 export default {
   components: {
-    KanbanBadge
+    // KanbanBadge
   },
   props: {
     task: {
