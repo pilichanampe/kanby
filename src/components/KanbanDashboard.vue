@@ -1,49 +1,70 @@
 <template>
-  <div>
-    <div class="flex justify-center">
-        <h1>uuid {{ uuid.v1() }}</h1>
-        <h1>uuid {{ uuid.v1() }}</h1>
-        <h1>uuid {{ uuid.v1() }}</h1>
-      <div class="d-flex justify-center">
-        
-        
+  <div class="mt-15">
+    <v-row class="d-flex justify-center">
+      <v-col
+        cols="12"
+        class="d-flex justify-center flex-wrap"
+      >
         <v-card
           v-for="column in columns"
           :key="column.title"
-          class="bg-gray-100 rounded-lg px-3 py-3 column-width rounded mr-4"
+          width="400"
+          max-width="400"
+          class="flex-grow-1 ma-2"
         >
-          <p class="text-gray-700 font-semibold font-sans tracking-wide text-sm">{{column.title}}</p>
-          <!-- Draggable component comes from vuedraggable. It provides drag & drop functionality -->
-          <draggable
-            :list="column.tasks"
-            :animation="200"
-            ghost-class="ghost-card"
-            group="tasks"
-          >
-            <!-- Each element from here will be draggable and animated. Note :key is very important here to be unique both for draggable and animations to be smooth & consistent. -->
-            <KanbanCard
-              v-for="(task) in column.tasks"
-              :key="task.id"
-              :task="task"
-              class="mt-3 cursor-move"
-            ></KanbanCard>
-            <!-- </transition-group> -->
-          </draggable>
+          <v-card-title>{{column.title}}</v-card-title>
+          <v-card-text>
+            <!-- Draggable component comes from vuedraggable. It provides drag & drop functionality -->
+            <draggable
+              :list="column.tasks"
+              :animation="200"
+              ghost-class="ghost-card"
+              group="tasks"
+            >
+              <!-- Each element from here will be draggable and animated. Note :key is very important here to be unique both for draggable and animations to be smooth & consistent. -->
+              <KanbanCard
+                v-for="(task) in column.tasks"
+                :key="task.id"
+                :task="task"
+                class="mt-3 cursor-move"
+              ></KanbanCard>
+              <!-- </transition-group> -->
+            </draggable>
+            <NewTaskDialog @setNewTask="e => newTask = e">
+              <template v-slot:activator="{ on, attrs}">
+                <v-btn
+                  v-if="column.title === 'Backlog'"
+                  color="primary"
+                  fab
+                  small
+                  v-bind="attrs"
+                  v-on="on"
+                  class="mt-3"
+                  title="Add task"
+                  @click="addTask"
+                >
+                  <v-icon>mdi-plus</v-icon>
+                </v-btn>
+              </template>
+            </NewTaskDialog>
+          </v-card-text>
         </v-card>
-      </div>
-    </div>
+      </v-col>
+    </v-row>
   </div>
 </template>
 
 <script>
 import draggable from "vuedraggable";
 import KanbanCard from "@/components/KanbanCard";
+import NewTaskDialog from "@/components/NewTaskDialog";
 import { uuid } from 'vue-uuid' // Import uuid
 
 export default {
   name: 'KanbanDashboard',
   components: {
     KanbanCard,
+    NewTaskDialog,
     draggable
   },
   data() {
@@ -52,204 +73,144 @@ export default {
       tasks: [],
       newTask: null,
       newColumn: null,
-      columnsDefault: [
-        {
-          title: "Backlog",
-          tasks: [
-            {
-              id: 1,
-              title: typeof this.uuid,
-              date: "Sep 14",
-              type: "Feature Request"
-            },
-            {
-              id: 2,
-              title: typeof this.uuid,
-              date: "Sep 12"
-            },
-            {
-              id: 3,
-              title: "Design shopping cart dropdown",
-              date: "Sep 9",
-              type: "Design"
-            },
-            {
-              id: 4,
-              title: typeof this.uuid,
-              date: "Sep 14",
-              type: "Feature Request"
-            },
-            {
-              id: 5,
-              title: "Test checkout flow",
-              date: "Sep 15",
-              type: "QA"
-            },
-        {
-          title: "Done",
-          tasks: [
-            {
-              id: 14,
-              title: typeof this.uuid,
-              date: "Sep 14",
-              type: "Feature Request"
-            },
-            {
-              id: 15,
-              title: "Design shopping cart dropdown",
-              date: "Sep 9",
-              type: "Design"
-            },
-            {
-              id: 16,
-              title: typeof this.uuid,
-              date: "Sep 14",
-              type: "Feature Request"
-            }
-          ]
-        }
-          ]
-        },
-        {
-          title: "In Progress",
-          tasks: [
-            {
-              id: 6,
-              title: "Design shopping cart dropdown",
-              date: "Sep 9",
-              type: "Design"
-            },
-            {
-              id: 7,
-              title: typeof this.uuid,
-              date: "Sep 14",
-              type: "Feature Request"
-            },
-            {
-              id: 8,
-              title: "Provide documentation on integrations",
-              date: "Sep 12",
-              type: "Backend"
-            }
-          ]
-        },        
-      ],
+      showDialog: null,
       columns: [
         {
           title: "Backlog",
           tasks: [
             {
               id: 1,
-              title: typeof this.uuid,
-              date: "Sep 14",
+              title: 'Hey! I\'m a task!',
+              description: "Some description for my awesome task",
               type: "Feature Request"
             },
-            {
-              id: 2,
-              title: "Provide documentation on integrations",
-              date: "Sep 12"
-            },
-            {
-              id: 3,
-              title: "Design shopping cart dropdown",
-              date: "Sep 9",
-              type: "Design"
-            },
-            {
-              id: 4,
-              title: typeof this.uuid,
-              date: "Sep 14",
-              type: "Feature Request"
-            },
-            {
-              id: 5,
-              title: "Test checkout flow",
-              date: "Sep 15",
-              type: "QA"
-            }
           ]
         },
         {
           title: "In Progress",
-          tasks: [
-            {
-              id: 6,
-              title: "Design shopping cart dropdown",
-              date: "Sep 9",
-              type: "Design"
-            },
-            {
-              id: 7,
-              title: typeof this.uuid,
-              date: "Sep 14",
-              type: "Feature Request"
-            },
-            {
-              id: 8,
-              title: "Provide documentation on integrations",
-              date: "Sep 12",
-              type: "Backend"
-            }
-          ]
-        },
-        {
-          title: "Review",
-          tasks: [
-            {
-              id: 9,
-              title: "Provide documentation on integrations",
-              date: "Sep 12"
-            },
-            {
-              id: 10,
-              title: "Design shopping cart dropdown",
-              date: "Sep 9",
-              type: "Design"
-            },
-            {
-              id: 11,
-              title: typeof this.uuid,
-              date: "Sep 14",
-              type: "Feature Request"
-            },
-            {
-              id: 12,
-              title: "Design shopping cart dropdown",
-              date: "Sep 9",
-              type: "Design"
-            },
-            {
-              id: 13,
-              title: typeof this.uuid,
-              date: "Sep 14",
-              type: "Feature Request"
-            }
-          ]
+          tasks: [],
         },
         {
           title: "Done",
-          tasks: [
-            {
-              id: 14,
-              title: typeof this.uuid,
-              date: "Sep 14",
-              type: "Feature Request"
-            },
-            {
-              id: 15,
-              title: "Design shopping cart dropdown",
-              date: "Sep 9",
-              type: "Design"
-            },
-            {
-              id: 16,
-              title: typeof this.uuid,
-              date: "Sep 14",
-              type: "Feature Request"
-            }
-          ]
+          tasks: [],
         }
-      ]
+      ],
+      // columns: [
+      //   {
+      //     title: "Backlog",
+      //     tasks: [
+      //       {
+      //         id: 1,
+      //         title: typeof this.uuid,
+      //         date: "Sep 14",
+      //         type: "Feature Request"
+      //       },
+      //       {
+      //         id: 2,
+      //         title: "Provide documentation on integrations",
+      //         date: "Sep 12"
+      //       },
+      //       {
+      //         id: 3,
+      //         title: "Design shopping cart dropdown",
+      //         date: "Sep 9",
+      //         type: "Design"
+      //       },
+      //       {
+      //         id: 4,
+      //         title: typeof this.uuid,
+      //         date: "Sep 14",
+      //         type: "Feature Request"
+      //       },
+      //       {
+      //         id: 5,
+      //         title: "Test checkout flow",
+      //         date: "Sep 15",
+      //         type: "QA"
+      //       }
+      //     ]
+      //   },
+      //   {
+      //     title: "In Progress",
+      //     tasks: [
+      //       {
+      //         id: 6,
+      //         title: "Design shopping cart dropdown",
+      //         date: "Sep 9",
+      //         type: "Design"
+      //       },
+      //       {
+      //         id: 7,
+      //         title: typeof this.uuid,
+      //         date: "Sep 14",
+      //         type: "Feature Request"
+      //       },
+      //       {
+      //         id: 8,
+      //         title: "Provide documentation on integrations",
+      //         date: "Sep 12",
+      //         type: "Backend"
+      //       }
+      //     ]
+      //   },
+      //   {
+      //     title: "Review",
+      //     tasks: [
+      //       {
+      //         id: 9,
+      //         title: "Provide documentation on integrations",
+      //         date: "Sep 12"
+      //       },
+      //       {
+      //         id: 10,
+      //         title: "Design shopping cart dropdown",
+      //         date: "Sep 9",
+      //         type: "Design"
+      //       },
+      //       {
+      //         id: 11,
+      //         title: typeof this.uuid,
+      //         date: "Sep 14",
+      //         type: "Feature Request"
+      //       },
+      //       {
+      //         id: 12,
+      //         title: "Design shopping cart dropdown",
+      //         date: "Sep 9",
+      //         type: "Design"
+      //       },
+      //       {
+      //         id: 13,
+      //         title: typeof this.uuid,
+      //         date: "Sep 14",
+      //         type: "Feature Request"
+      //       }
+      //     ]
+      //   },
+      //   {
+      //     title: "Done",
+      //     tasks: [
+      //       {
+      //         id: 14,
+      //         title: typeof this.uuid,
+      //         date: "Sep 14",
+      //         type: "Feature Request"
+      //       },
+      //       {
+      //         id: 15,
+      //         title: "Design shopping cart dropdown",
+      //         date: "Sep 9",
+      //         type: "Design"
+      //       },
+      //       {
+      //         id: 16,
+      //         title: typeof this.uuid,
+      //         date: "Sep 14",
+      //         type: "Feature Request"
+      //       }
+      //     ]
+      //   }
+      // ]
     };
   },
   methods: {
@@ -270,16 +231,28 @@ export default {
 
       this.tasks.push(this.newTask);
       this.newTask = '';
-      this.savetasks();
+      this.saveTasks();
     },
     removeTask(x) {
       this.tasks.splice(x, 1);
-      this.savetasks();
+      this.saveTasks();
     },
     saveTasks() {
       const parsed = JSON.stringify(this.tasks);
       localStorage.setItem('tasks', parsed);
     }    
+  },
+  watch: {
+    newTask(n) {
+      if(n) {
+        this.columns.map(column => {
+          if (column.title === 'Backlog') {
+            column.tasks = [...column.tasks, n];
+          }
+        });
+        this.newTask = null;
+      }
+    }
   },
   mounted() {
    
@@ -288,10 +261,6 @@ export default {
 </script>
 
 <style scoped>
-.column-width {
-  min-width: 320px;
-  width: 320px;
-}
 /* Unfortunately @apply cannot be setup in codesandbox, 
 but you'd use "@apply border opacity-50 border-blue-500 bg-gray-200" here */
 .ghost-card {
